@@ -1,0 +1,256 @@
+import React, { Fragment } from "react";
+import { Link } from "react-router-dom";
+
+function Home() { 
+  return (
+    <Fragment>
+          <>
+            <meta charSet="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Tabungan</title>
+            <link rel="stylesheet" href="assets/css/home.css" />
+            <link
+              rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            />
+            <header>
+              <img src="assets/img/logo.png" alt="Logo" className="logo" />
+              <nav className="navigation">
+                <Link to ="/home"><a href="home.html" className="active">
+                  Home
+                </a></Link>
+                <a
+                  href="#"
+                  className="navigation-link dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                >
+                  Tabungan
+                </a>
+                <div className="dropdown-menu fade-up m-0">
+                  <Link to ="/formbersama"><a href="formbersama.html" className="dropdown-item">
+                    Tabungan Bersama
+                  </a></Link>
+                  <Link to ="/formpribadi"><a href="formpribadi.html" className="dropdown-item">
+                    Tabungan Mandiri
+                  </a></Link>
+                </div>
+                  <Link to ="/keuangan"><a href="keuangan.html">Keuangan</a></Link>
+                  <Link to ="/artikel"><a href="Artikel.html">Artikel</a></Link>
+                  <Link to ="/profil"><a href="profil.html">
+                  <button className="profile">Profile</button>
+                  </a></Link>
+              </nav>
+            </header>
+            <main>
+              <section className="welcome-section">
+                <div className="container">
+                  <img src="assets/img/uang.jpg" alt="Money Icon" />
+                  <h2>Selamat Datang di Tabungin!</h2>
+                  <p>Mulai perjalanan menabungmu dengan mudah dan menyenangkan.</p>
+                </div>
+              </section>
+              <section className="tabungan-section">
+                <h2>Ini Tabunganku</h2>
+                <div className="carousel">
+                  <button className="arrow left">&lt;</button>
+                  <div className="cards">
+                    <div className="card">
+                      <img src="assets/img/macbook.jpg" alt="Macbook" />
+                      <h2>Macbook</h2>
+                      <p>Target Tabungan: Rp. 30.000.000</p>
+                      <p>Jumlah Tabungan: Rp. 15.000.000</p>
+                      <Link to ="/tabunganbersama"><a href="tabunganbersama.html">
+                        <button className="detail-button">Lihat Detail</button>
+                      </a></Link>
+                    </div>
+                    <div className="card">
+                      <img src="assets/img/baer.jpg" alt="Skincare" />
+                      <h2>Skincare</h2>
+                      <p>Target Tabungan: Rp. 1.000.000</p>
+                      <p>Jumlah Tabungan: Rp. 300.000</p>
+                      <Link to ="/tabunganbersama"><a href="tabunganbersama.html">
+                        <button className="detail-button">Lihat Detail</button>
+                      </a></Link>
+                    </div>
+                    <div className="card">
+                      <img src="assets/img/holiday.jpg" alt="Holiday" />
+                      <h2>Holiday</h2>
+                      <p>Target Tabungan: Rp. 50.000.000</p>
+                      <p>Jumlah Tabungan: Rp. 20.000.000</p>
+                      <a href="tabunganbersama.html">
+                        <button className="detail-button">Lihat Detail</button>
+                      </a>
+                    </div>
+                    <div className="card">
+                      <img src="assets/img/b'day.jpg" alt="Birthday Party" />
+                      <h2>Birthday Party</h2>
+                      <p>Target Tabungan: Rp. 1.000.000</p>
+                      <p>Jumlah Tabungan: Rp. 300.000</p>
+                      <Link to ="/tabunganbersama"><a href="tabunganbersama.html">
+                        <button className="detail-button">Lihat Detail</button>
+                      </a></Link>
+                    </div>
+                  </div>
+                  <button className="arrow right">&gt;</button>
+                </div>
+              </section>
+              <section className="finance-section">
+                <div className="container">
+                  <h1>Keuanganku</h1>
+                  <div className="income-section">
+                    <div className="income-label">
+                      <span>💰 Penghasilan</span>
+                      <span className="income-value">Rp 5.250.000</span>
+                    </div>
+                  </div>
+                  <div className="income-actions">
+                    <button className="edit-btn">Edit</button>
+                    <button className="save-btn">Simpan</button>
+                  </div>
+                  <div className="income-notes">
+                    <p>*Penghasilanmu berhasil ditambahkan: Rp 5.000.000</p>
+                    <p>*Tambah penghasilan Rp 250.000 berhasil!</p>
+                  </div>
+                  <div className="allocation-section">
+                    <h2>Alokasi Danaku</h2>
+                    <button className="detail-btn">Lihat Detail</button>
+                    <div className="allocation-items">
+                      <button className="arrow left">❮</button>
+                      <div className="allocation-item">
+                        <img src="assets/img/HOME1.png" alt="Kebutuhan Pribadi" />
+                        <p>Kebutuhan Pribadi</p>
+                        <span>Rp 1.000.000</span>
+                      </div>
+                      <div className="allocation-item">
+                        <img src="assets/img/HOME2.png" alt="Belanja Bulanan" />
+                        <p>Belanja Bulanan</p>
+                        <span>Rp 2.000.000</span>
+                      </div>
+                      <div className="allocation-item">
+                        <img src="assets/img/HOME3.png" alt="Transportasi" />
+                        <p>Transportasi</p>
+                        <span>Rp 500.000</span>
+                      </div>
+                      <button className="arrow right">❯</button>
+                    </div>
+                  </div>
+                  <div className="expenses-section">
+                    <h2>Pengeluaranku</h2>
+                    <p>Lihat status keuangan</p>
+                    <div className="expenses-summary">
+                      <div className="expense-card">
+                        <p>Jumlah Pemasukkan</p>
+                        <span>Rp 5.000.000</span>
+                      </div>
+                      <div className="expense-card">
+                        <p>Jumlah Pengeluaran</p>
+                        <span>Rp 3.500.000</span>
+                      </div>
+                      <div className="expense-card">
+                        <p>Tabungan</p>
+                        <span>Rp 1.500.000</span>
+                      </div>
+                    </div>
+                    <button className="detail-btn">Lihat Detail Pengeluaran</button>
+                  </div>
+                </div>
+              </section>
+              <section className="section">
+                <div className="container">
+                  <h1>Artikel</h1>
+                  <p className="trending-label">Trending :</p>
+                  <nav className="trending-nav">
+                    <Link to ="/isiartikel"><a href="isiartikel.html">Tips Menabung</a></Link>
+                    <Link to ="/isiartikel"><a href="isiartikel.html">Investasi</a></Link>
+                    <Link to ="/isiartikel"><a href="isiartikel.html">Menabung Efektif</a></Link>
+                    <Link to ="/isiartikel"><a href="isiartikel.html">Strategi Investasi</a></Link>
+                    <Link to ="/isiartikel"><a href="isiartikel.html">Cara Hemat</a></Link>
+                    <Link to ="/isiartikel"><a href="isiartikel.html">Bagaimana Cara</a></Link>
+                    <a href="#" className="arrow">
+                      →
+                    </a>
+                  </nav>
+                  <div className="content">
+                    <div className="articles">
+                      <div className="article-card">
+                        <img src="assets/img/artikel1.jpeg" alt="Tips Menabung Cepat" />
+                        <h2>Tips Menabung Cepat</h2>
+                        <p>
+                          Menabung adalah langkah penting dalam mewujudkan impian
+                          finansial, mulai dari membeli barang impian.
+                        </p>
+                        <Link to ="/isiartikel">
+                        <a href="isiartikel.html">
+                          <button className="read-more">Baca Selengkapnya</button>
+                        </a>
+                        </Link>
+                      </div>
+                      <div className="article-card">
+                        <img src="assets/img/artikel2.jpg" alt="Menabung dengan Bijak" />
+                        <h2>Menabung dengan Bijak</h2>
+                        <p>
+                          Menabung dengan bijak adalah keterampilan penting yang dapat
+                          membantu Anda mencapai stabilitas.
+                        </p>
+                        <button className="read-more">Baca Selengkapnya</button>
+                      </div>
+                      <div className="article-card">
+                        <img src="assets/img/artikel3.jpg" alt="Strategi Menabung Pemula" />
+                        <h2>Strategi Menabung Pemula</h2>
+                        <p>
+                          Menabung mungkin terasa sulit bagi pemula, terutama jika belum
+                          terbiasa.
+                        </p>
+                        <button className="read-more">Baca Selengkapnya</button>
+                      </div>
+                      <div className="article-card">
+                        <img src="assets/img/artikel4.png" alt="Nabung Dana Darurat" />
+                        <h2>Nabung Dana Darurat</h2>
+                        <p>
+                          Menyisihkan dana untuk keperluan mendesak adalah langkah cerdas
+                          yang bisa menyelamatkan keuangan Anda.
+                        </p>
+                        <button className="read-more">Baca Selengkapnya</button>
+                      </div>
+                    </div>
+                    <aside className="sidebar">
+                      <div className="search-bar">
+                        <input type="text" placeholder="Cari Artikel" />
+                        <button>🔍</button>
+                      </div>
+                      <h3>Artikel Populer</h3>
+                      <ul className="popular-articles">
+                        <li>
+                          <a href="#">Rahasia Menabung di Tengah...</a>
+                        </li>
+                        <li>
+                          <a href="#">Cara Menabung Tanpa Meng...</a>
+                        </li>
+                        <li>
+                          <a href="#">5 Strategi Menabung Cerdas</a>
+                        </li>
+                        <li>
+                          <a href="#">Menabung di Era Digital</a>
+                        </li>
+                        <li>
+                          <a href="#">Menabung untuk Liburan</a>
+                        </li>
+                        <li>
+                          <a href="#">Menabung di Usia 30-an</a>
+                        </li>
+                        <li>
+                          <a href="#">Panduan Menabung</a>
+                        </li>
+                      </ul>
+                    </aside>
+                  </div>
+                </div>
+              </section>
+            </main>
+          </>
+    </Fragment>
+    
+  );
+}
+
+export default Home;

@@ -1,0 +1,375 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #1e3a8a;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header .logo {
+    width: 100px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: white;
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+
+.navigation a {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 500;
+    transition: color 0.3s;
+    position: relative;
+}
+
+.navigation .dropdown-toggle {
+    cursor: pointer;
+    position: relative;
+}
+
+.navigation .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 70%;
+    left: 70px;
+    background-color: #2a448c;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 100;
+    min-width: 150px;
+}
+
+.navigation .dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+.navigation .dropdown-menu a:hover {
+    background-color: #1f2e77;
+    color: #d3d3d3;
+}
+
+.navigation .dropdown-toggle:hover + .dropdown-menu,
+.navigation .dropdown-menu:hover {
+    display: block;
+}
+
+.navigation a:hover {
+    color: #1f2468;
+}
+
+.navigation a.active {
+    background-color: #3749b4;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.navigation .profile {
+    background-color: #3749b4;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.navigation .profile:hover {
+    color: #1f2468;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 15px;
+    gap: 10px;
+}
+
+.banner {
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    margin: 1rem;
+}
+
+.banner-text {
+    flex: 1;
+}
+
+.banner-img {
+    width: 300px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.expand-btn {
+    background-color: #2d4a9c;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+}
+
+.manage-finance {
+    background-color: #d1e1f2;
+    padding: 2rem;
+    border-radius: 10px;
+    margin: 1rem;
+}
+
+.finance-overview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.finance-form label {
+    display: block;
+    margin: 1rem 0 0.5rem;
+}
+
+.finance-form input,
+.finance-form button {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.summary {
+    background-color: #f8f8f8;
+    padding: 2rem;
+    border-radius: 10px;
+    margin: 1rem;
+}
+
+.summary-cards {
+    display: flex;
+    justify-content: space-around;
+}
+
+.card {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    width: 30%;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.transactions {
+    margin: 1rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th,
+td {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #d1e1f2;
+}
+
+.footer {
+    background-color: #2d4a9c;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.footer a {
+    color: white;
+    margin: 0 0.5rem;
+    text-decoration: none;
+}
+
+.footer {
+    background-color: #123c92;
+    color: white;
+    padding: 10px 0;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+}
+
+.footer-left {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-left p,
+.footer-left a {
+    color: #e5eaf0;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.footer-right a {
+    margin: 0 5px;
+}
+
+.footer-right img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: white;
+    padding: 4px;
+    transition: transform 0.3s ease;
+}
+
+.footer-right img:hover {
+    transform: scale(1.1);
+}
+
+.container {
+    width: 80%;
+    max-width: 1200px;
+    background-color: #CBDCEB;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.title {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.chart {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+    height: 300px;
+}
+
+.bar {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background-color: #9CB6D6;
+    border-radius: 5px;
+    text-align: center;
+    color: #fff;
+    font-size: 0.9em;
+}
+
+.income {
+    background-color: #FFFFFF;
+    height: 30%;
+}
+
+.edit-btn,
+.save-btn {
+    background-color: #9bb0db;
+    border: none;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+    background-color: #8291be;
+}
+
+.submit-btn{
+    background-color: #9bb0db;
+    border: none;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #8291be;
+}
+
+.expense {
+    background-color: #4A85C5;
+    height: 70%;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+.legend div {
+    display: flex;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.legend div span {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    border-radius: 3px;
+}
+
+.income-legend span {
+    background-color: #FFFFFF;
+}
+
+.expense-legend span {
+    background-color: #4A85C5;
+}

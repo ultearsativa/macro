@@ -1,0 +1,211 @@
+/* Reset gaya */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e3ebf1;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #1e3a8a;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header .logo {
+    width: 100px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: white;
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+
+.navigation a {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 500;
+    transition: color 0.3s;
+    position: relative;
+}
+
+.navigation .dropdown-toggle {
+    cursor: pointer;
+    position: relative;
+}
+
+.navigation .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 70%;
+    left: 70px;
+    background-color: #2a448c;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 100;
+    min-width: 150px;
+}
+
+.navigation .dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+.navigation .dropdown-menu a:hover {
+    background-color: #1f2e77;
+    color: #d3d3d3;
+}
+
+.navigation .dropdown-toggle:hover + .dropdown-menu,
+.navigation .dropdown-menu:hover {
+    display: block;
+}
+
+.navigation a:hover {
+    color: #1f2468;
+}
+
+.navigation a.active {
+    background-color: #3749b4;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.navigation .profile {
+    background-color: #3749b4;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.navigation .profile:hover {
+    color: #1f2468;
+}
+
+/* Konten Utama */
+main {
+    padding-top: 80px;
+    display: flex;
+    justify-content: center;
+}
+
+.detail-tabungan-container {
+    width: 90%;
+    max-width: 600px;
+    padding: 20px;
+    background-color: #e3ebf1;
+}
+
+.back-button {
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.detail-tabungan-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Bagian Detail Tabungan */
+.tabungan-detail {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tabungan-image-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tabungan-image {
+    width: 150px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
+
+.tabungan-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tabungan-info h2 {
+    font-size: 24px;
+    color: #333;
+}
+
+.tabungan-info p {
+    font-size: 16px;
+    color: #666;
+}
+
+.progress {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #4a60d3;
+    font-weight: bold;
+}
+
+.tabungan-dates,
+.tabungan-summary,
+.tabungan-history {
+    background-color: #f7f8fc;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.tabungan-dates div,
+.tabungan-summary div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tabungan-dates p,
+.tabungan-summary p,
+.tabungan-history p {
+    font-size: 14px;
+    color: #333;
+}
+
+.tabungan-summary div {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    color: #4a4a4a;
+}
+
+.tabungan-history p:last-child {
+    color: #4a60d3;
+    font-weight: bold;
+    text-align: right;
+}

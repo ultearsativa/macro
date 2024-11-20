@@ -1,0 +1,334 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #1e3a8a;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header .logo {
+    width: 100px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: white;
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+
+.navigation a {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 500;
+    transition: color 0.3s;
+    position: relative;
+}
+
+.navigation .dropdown-toggle {
+    cursor: pointer;
+    position: relative;
+}
+
+.navigation .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 70%;
+    left: 70px;
+    background-color: #2a448c;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 100;
+    min-width: 150px;
+}
+
+.navigation .dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+.navigation .dropdown-menu a:hover {
+    background-color: #1f2e77;
+    color: #d3d3d3;
+}
+
+.navigation .dropdown-toggle:hover + .dropdown-menu,
+.navigation .dropdown-menu:hover {
+    display: block;
+}
+
+.navigation a:hover {
+    color: #1f2468;
+}
+
+.navigation a.active {
+    background-color: #3749b4;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.navigation .profile {
+    background-color: #3749b4;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.navigation .profile:hover {
+    color: #1f2468;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 15px;
+    gap: 10px;
+}
+
+.sign-up {
+    background-color: #ffffff;
+    color: #1f2468;
+    border-color: #1f2468;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.sign-up:hover {
+    background-color: #1f2468;
+    color: #ffffff;
+}
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.profile-card {
+    background-color: #f8f8f8;
+    width: 400px;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.profile-image {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.profile-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.edit-button {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2d4a9c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.profile-info h2 {
+    margin-bottom: 1rem;
+}
+
+.profile-info form label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.profile-info form input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.cancel-button,
+.save-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-button {
+    background-color: #ccc;
+}
+
+.save-button {
+    background-color: #2d4a9c;
+    color: white;
+}
+
+.profile-footer {
+    margin-top: 1rem;
+}
+
+.profile-footer a {
+    color: #2d4a9c;
+    text-decoration: none;
+    margin: 0 0.5rem;
+}
+
+.account-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+}
+
+.logout-button,
+.delete-button {
+    width: 45%;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logout-button {
+    background-color: #ccc;
+}
+
+.delete-button {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.main-footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem;
+    background-color: #2d4a9c;
+    color: white;
+    margin-top: 2rem;
+}
+
+.main-footer a {
+    color: white;
+    text-decoration: none;
+    margin: 0 0.5rem;
+}
+
+.social-media a {
+    color: white;
+    text-decoration: none;
+    margin: 0 0.5rem;
+}
+
+/*poter*/
+
+.footer {
+    background-color: #2d4a9c;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.footer a {
+    color: white;
+    margin: 0 0.5rem;
+    text-decoration: none;
+}
+
+/*poter*/
+
+.footer {
+    background-color: #123c92;
+    /* Dark blue background */
+    color: white;
+    padding: 10px 0;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+}
+
+.footer-left {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-left p,
+.footer-left a {
+    color: #e5eaf0;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.footer-right a {
+    margin: 0 5px;
+}
+
+.footer-right img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: white;
+    padding: 4px;
+    transition: transform 0.3s ease;
+}
+
+.footer-right img:hover {
+    transform: scale(1.1);
+}
