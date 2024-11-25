@@ -1,15 +1,58 @@
-import React, { Fragment } from "react";
-import { Link } from "react-router-dom"; 
+import React, { Fragment, useState } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-function Login() { 
-  const navigate = useNavigate(); // Menggunakan hook useNavigate untuk navigasi programatik
+function Login() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    emailOrUsername: "",
+    password: "",
+  });
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); 
-    console.log("Form submitted!");
-    // Navigasi ke halaman home setelah login
-    navigate("/home"); // Ganti '/home' dengan path halaman home yang sesuai
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage(""); // Reset error message before submission
+  
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emailOrUsername: formData.emailOrUsername, // Menggunakan username/email
+          password: formData.password,
+        }),
+      });
+  
+      console.log('Response:', response); // Tambahkan ini untuk memeriksa response
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log("Login successful!", data);
+        localStorage.setItem("token", data.token);
+        navigate("/home");
+      } else {
+        setErrorMessage(data.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setErrorMessage("Terjadi kesalahan server. Silakan coba lagi.");
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    console.log("Continue with Google clicked!");
+  };
+
+  const handleFaq = () => {
+    console.log("FAQ button clicked!");
   };
 
   return (
@@ -19,15 +62,13 @@ function Login() {
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Tabungin Login Page</title>
       <link rel="stylesheet" href="assets/css/style.css" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-      <script src="assets/js/script.js"></script>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      />
       <header>
         <img src="assets/img/logo.png" alt="Logo" className="logo" />
         <nav className="navigation">
-          <a href="home.html">Home</a>
-          <a href="tabunganbersama.html">Tabungan</a>
-          <a href="keuangan.html">Keuangan</a>
-          <a href="Artikel.html">Artikel</a>
           <Link to="/signup">
             <button className="profile">SignUp</button>
           </Link>
@@ -36,31 +77,39 @@ function Login() {
       <main className="login-container">
         <div className="login-box">
           <h2>Kamu Sudah Mempunyai Akun, Silahkan Log In!</h2>
-          <form>
+          <form onSubmit={handleSubmit}>
             <label htmlFor="email">Email or Username</label>
             <input
               type="text"
               id="email"
+              name="emailOrUsername"
               placeholder="Enter your Email or Username"
               aria-label="Email or Username"
+              value={formData.emailOrUsername}
+              onChange={handleChange}
               required
             />
             <label htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
+              name="password"
               placeholder="Enter your password"
               aria-label="Password"
+              value={formData.password}
+              onChange={handleChange}
               required
             />
-            <Link to ="/home">
-            <button type="submit" className="login-btn" aria-label="Log In">Log In</button>
-            </Link>
+            <button type="submit" className="login-btn" aria-label="Log In">
+              Log In
+            </button>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
             <div className="divider">Or</div>
             <button
               type="button"
               className="google-login"
               aria-label="Continue with Google"
+              onClick={handleGoogleLogin}
             >
               Continue with Google
             </button>
@@ -68,7 +117,7 @@ function Login() {
         </div>
       </main>
       <footer>
-        <button className="faq-btn">
+        <button className="faq-btn" onClick={handleFaq}>
           FAQ &amp; Bantuan <span>❓</span>
         </button>
       </footer>

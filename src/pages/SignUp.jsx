@@ -66,28 +66,40 @@ function SignUp() {
             <input
               type="text"
               id="name"
+              name="name"
               placeholder="Masukkan Nama Anda"
+              onChange={(e)=> handleChange (e)}
+              value={form.name}
               required
             />
             <label htmlFor="username">Username</label>
             <input
               type="text"
               id="username"
+              name="username"
               placeholder="Masukkan Username Anda"
+              onChange={(e)=> handleChange (e)}
+              value={form.username}
               required
             />
             <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
+              name="email"
               placeholder="Masukkan Email Anda"
+              onChange={(e)=> handleChange (e)}
+              value={form.email}
               required
             />
             <label htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
+              name="password"
               placeholder="Masukkan Kata Sandi"
+              onChange={(e)=> handleChange (e)}
+              value={form.password}
               required
             />
             <button type="submit" className="register-btn">
