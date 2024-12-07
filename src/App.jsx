@@ -33,7 +33,7 @@ function App(root) {
         <Route path="/listBersama" element={<ListBersama />} />
         <Route path="/listBersama2" element={<ListBersama2 />} />
         <Route path="/profil" element={<Profil />} />
-        <Route path="/tabunganbersama" element={<Tabunganbersama />} />
+        <Route path="/tabunganbersama/:id" element={<Tabunganbersama />} />
         <Route path="/tabunganpribadi" element={<Tabunganpribadi />} />
       </Routes>
     </Router>

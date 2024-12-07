@@ -1,13 +1,65 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+
+// Fungsi untuk memformat tanggal menjadi dd/mm/yyyy
+const formatTanggal = (dateString) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
 
 function Tabunganbersama() {
+  const { id } = useParams(); // Ambil ID dari parameter URL
+  const [tabungan, setTabungan] = useState(null); // Simpan data tabungan
   const [frequency, setFrequency] = useState("Mingguan");
-  const [fileName, setFileName] = useState("");
+  const [file, setFile] = useState(null);
+  const [formData, setFormData] = useState({
+    judul: "",
+    target_tabungan: "",
+    nominal_setor: "",
+    tanggal_awal_setor: "",
+    tanggal_akhir_setor: "",
+  });
+
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Fetch data tabungan berdasarkan ID
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`http://localhost:5000/api/auth/bersama/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        if (!response.ok) {
+          console.error(`Failed to fetch, status code: ${response.status}`);
+          throw new Error("Gagal mengambil data tabungan.");
+        }
+    
+        const data = await response.json();
+        setTabungan(data); // Save the data
+        setFormData({
+          judul: data.judul,
+          target_tabungan: data.target_tabungan,
+          nominal_setor: data.nominal_setor,
+          tanggal_awal_setor: formatTanggal(data.tanggal_awal_setor),
+          tanggal_akhir_setor: formatTanggal(data.tanggal_akhir_setor),
+        });
+      } catch (error) {
+        console.error("Error fetching tabungan data:", error);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
   const handleBack = () => {
-    navigate(-1); // Navigate back to the previous page
+    navigate(-1); // Kembali ke halaman sebelumnya
   };
 
   const handleFrequencyChange = (newFrequency) => {
@@ -15,22 +67,50 @@ function Tabunganbersama() {
   };
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0]?.name || "Tidak ada file dipilih";
-    setFileName(file);
-    alert(`File dipilih: ${file}`);
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
   };
 
-  const handleViewSaving = () => {
-    alert("Detail tabungan akan segera tersedia!");
-  };
-
-  const handleSave = () => {
+  const handleSave = async () => {
+    // Validasi input
+    if (!formData.nominal_setor || isNaN(formData.nominal_setor)) {
+      alert("Nominal Setor harus berupa angka!");
+      return;
+    }
+  
     const isConfirmed = window.confirm("Apakah Anda yakin ingin menyimpan perubahan?");
     if (isConfirmed) {
-      alert("Data berhasil disimpan!");
+      const token = localStorage.getItem("token");
+  
+      const dataToSend = new FormData();
+      dataToSend.append("nominal_setor", formData.nominal_setor); // Kirim hanya nominal_setor
+  
+      if (file) {
+        dataToSend.append("unggah_gambar", file);
+      }
+  
+      try {
+        const response = await fetch(`http://localhost:5000/api/auth/bersama/${id}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: dataToSend,
+        });
+  
+        if (!response.ok) {
+          throw new Error("Gagal menyimpan data tabungan.");
+        }
+  
+        const result = await response.json();
+        alert(result.message || "Data berhasil disimpan!");
+      } catch (error) {
+        console.error("Error saving tabungan data:", error);
+        alert("Terjadi kesalahan saat menyimpan data.");
+      }
     }
   };
-
+    
   const handleCancel = () => {
     const isCancelled = window.confirm("Apakah Anda yakin ingin membatalkan perubahan?");
     if (isCancelled) {
@@ -38,33 +118,27 @@ function Tabunganbersama() {
     }
   };
 
+  const handleLihatTabungan = (id) => {
+    navigate(`/list2/${id}`); // Redirect to list2/id
+  };
+
+  if (!tabungan) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
-      <meta charSet="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Edit Tabungan</title>
-      <link rel="stylesheet" href="assets/css/tabunganbersama.css" />
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-      />
-
+      <link rel="stylesheet" href="/assets/css/tabunganbersama.css" />
       <header>
-        <img src="assets/img/logo.png" alt="Logo" className="logo" />
+        <img src="/assets/img/logo.png" alt="Logo" className="logo" />
         <nav className="navigation">
-          <Link to="/profil" >
-            Home
-          </Link>
-          <a href="#" className="navigation-link dropdown-toggle active ">
+          <Link to="/profil">Home</Link>
+          <Link to="#" className="navigation-link dropdown-toggle active">
             Tabungan
-          </a>
+          </Link>
           <div className="dropdown-menu fade-up m-0">
-            <Link to="/formbersama" className="dropdown-item">
-              Tabungan Bersama
-            </Link>
-            <Link to="/formpribadi" className="dropdown-item">
-              Tabungan Mandiri
-            </Link>
+            <Link to="/formbersama" className="dropdown-item">Tabungan Bersama</Link>
+            <Link to="/formpribadi" className="dropdown-item">Tabungan Mandiri</Link>
           </div>
           <Link to="/keuangan">Keuangan</Link>
           <Link to="/artikel">Artikel</Link>
@@ -79,36 +153,50 @@ function Tabunganbersama() {
           <div className="back-button" onClick={handleBack}>
             ⬅️
           </div>
-          <h1>Holiday</h1>
+          <h1>{tabungan.judul}</h1>
           <div className="form-container">
             <div className="image-section">
               <img
-                src="assets/img/holiday.jpg"
-                alt="Holiday"
+                src={`http://localhost:5000/${tabungan.unggah_gambar}`}
+                alt={tabungan.judul}
                 className="tabungan-image"
               />
-              <Link to="/listBersama2">
-                <button className="lihat-tabungan" onClick={handleViewSaving}>
-                  Lihat Tabungan
-                </button>
-              </Link>
+             <button className="lihat-tabungan" onClick={handleLihatTabungan}>
+                Lihat Tabungan
+              </button>
             </div>
             <div className="form-section">
               <div className="form-group">
                 <label>Judul</label>
-                <input type="text" defaultValue="Holiday" />
+                <input
+                  type="text"
+                  value={formData.judul}
+                  onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+                />
               </div>
               <div className="form-group">
                 <label>Target</label>
-                <input type="text" defaultValue="Rp 30.000.000" />
+                <input
+                  type="text"
+                  value={formData.target_tabungan}
+                  onChange={(e) => setFormData({ ...formData, target_tabungan: e.target.value })}
+                />
               </div>
               <div className="form-group">
                 <label>Nominal Setor</label>
-                <input type="text" defaultValue="Rp 100.000" />
+                <input
+                  type="text"
+                  value={formData.nominal_setor}
+                  onChange={(e) => setFormData({ ...formData, nominal_setor: e.target.value })}
+                />
               </div>
               <div className="form-group">
                 <label>Tanggal Awal Setor</label>
-                <input type="date" defaultValue="2024-10-30" />
+                <input
+                  type="date"
+                  value={formData.tanggal_awal_setor.split("/").reverse().join("-")}
+                  onChange={(e) => setFormData({ ...formData, tanggal_awal_setor: e.target.value })}
+                />
               </div>
               <div className="form-group frekuensi">
                 {["Harian", "Mingguan", "Bulanan"].map((freq) => (
@@ -123,7 +211,11 @@ function Tabunganbersama() {
               </div>
               <div className="form-group">
                 <label>Tanggal Akhir Setor</label>
-                <input type="date" defaultValue="2030-05-30" />
+                <input
+                  type="date"
+                  value={formData.tanggal_akhir_setor.split("/").reverse().join("-")}
+                  onChange={(e) => setFormData({ ...formData, tanggal_akhir_setor: e.target.value })}
+                />
               </div>
               <div className="form-group">
                 <label>Unggah Gambar</label>

@@ -1,33 +1,58 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function List2() {
-  const [progress, setProgress] = useState(10);
-  const [terkumpul, setTerkumpul] = useState(100000);
-  const [target] = useState(30000000);
-  const [kekurangan, setKekurangan] = useState(target - terkumpul);
-  const [estimasiTanggal, setEstimasiTanggal] = useState("30/05/2030");
+  const { id } = useParams(); // Ambil ID dari parameter URL
+  const [data, setData] = useState(null); // State untuk data tabungan bersama
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
 
   useEffect(() => {
-    // Update progress after 3 seconds
-    const progressTimer = setTimeout(() => {
-      setProgress(20);
-    }, 3000);
+    console.log("Fetching data for ID:", id); // Debugging ID
 
-    // Update estimasi tanggal after 5 seconds
-    const tanggalTimer = setTimeout(() => {
-      setEstimasiTanggal("01/06/2030");
-    }, 5000);
+    // Fungsi untuk fetch data tabungan bersama
+    const fetchData = async () => {
+      try {
+        // Ambil token dari localStorage
+        const token = localStorage.getItem("token");
 
-    return () => {
-      clearTimeout(progressTimer);
-      clearTimeout(tanggalTimer);
+        if (!token) {
+          throw new Error("Token tidak tersedia. Harap login terlebih dahulu.");
+        }
+
+        const response = await fetch(`http://localhost:5000/api/auth/bersama/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("API Result:", result); // Debugging log untuk memeriksa respons API
+
+        if (result && result.length > 0) {
+          setData(result[0]); // Ambil tabungan pertama
+        } else {
+          throw new Error("Data tidak ditemukan atau array kosong");
+        }
+
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error:", err); // Debugging log untuk menangani error
+        setError(err.message);
+        setIsLoading(false);
+      }
     };
-  }, []);
 
-  useEffect(() => {
-    setKekurangan(target - terkumpul);
-  }, [terkumpul, target]);
+    if (id) {
+      fetchData();
+    }
+  }, [id]);
 
   const formatRupiah = (angka) => {
     return new Intl.NumberFormat("id-ID", {
@@ -36,104 +61,51 @@ function List2() {
     }).format(angka);
   };
 
-  const handleBack = () => {
-    window.history.back();
-  };
-
-  const handleProfileClick = () => {
-    alert("Navigasi ke halaman Profile!");
-  };
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!data) return <p>Data tidak ditemukan.</p>;
 
   return (
     <>
-      <meta charSet="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Detail Tabungan</title>
-      <link rel="stylesheet" href="assets/css/listT.css" />
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-      />
-
       <header>
+        <link rel="stylesheet" href="assets/css/listT.css" />
         <img src="assets/img/logo.png" alt="Logo" className="logo" />
         <nav className="navigation">
-          <Link to="/home">
-            Home
-          </Link>
-          <a href="#" className="navigation-link dropdown-toggle active">
-            Tabungan
-          </a>
-          <div className="dropdown-menu fade-up m-0">
-            <Link to="/formbersama" className="dropdown-item">
-              Tabungan Bersama
-            </Link>
-            <Link to="/formpribadi" className="dropdown-item">
-              Tabungan Mandiri
-            </Link>
-          </div>
+          <Link to="/home">Home</Link>
           <Link to="/keuangan">Keuangan</Link>
-          <Link to="/artikel">Artikel</Link>
-          <Link to="/profil">
-            <button className="profile" onClick={handleProfileClick}>
-              Profile
-            </button>
-          </Link>
         </nav>
       </header>
 
       <main>
         <section className="detail-tabungan-container">
-          <div className="back-button" onClick={handleBack}>
+          <div className="back-button" onClick={() => window.history.back()}>
             ⬅️
           </div>
-          <h1 className="detail-tabungan-container h1">Macbook</h1>
+          <h1>{data.judul}</h1>
           <div className="tabungan-detail">
             <div className="tabungan-image-section">
               <img
-                src="assets/img/macbook.jpg"
-                alt="Macbook"
+                src={data.unggah_gambar || "assets/img/default.jpg"}
+                alt={data.judul}
                 className="tabungan-image"
               />
             </div>
             <div className="tabungan-info">
-              <h2>{formatRupiah(target)}</h2>
-              <p>{formatRupiah(100000)} Perminggu</p>
-              <div className="progress">
-                <span
-                  style={{
-                    color: progress >= 100 ? "green" : "#4a60d3",
-                    transition: "all 0.5s ease-in-out",
-                  }}
-                >
-                  {progress}%
-                </span>
-              </div>
+              <h2>{formatRupiah(data.target_tabungan)}</h2>
+              <p>
+                {formatRupiah(data.nominal_setor)} {data.frekuensi_setor}
+              </p>
+              <p>Terkumpul: {formatRupiah(data.currentAmount)}</p>
             </div>
             <div className="tabungan-dates">
               <div>
                 <p>Tanggal Dibuat</p>
-                <p>30/10/2024</p>
+                <p>{new Date(data.tanggal_awal_setor).toLocaleDateString()}</p>
               </div>
               <div>
                 <p>Estimasi Tanggal Ketercapaian</p>
-                <p>{estimasiTanggal}</p>
+                <p>{new Date(data.tanggal_akhir_setor).toLocaleDateString()}</p>
               </div>
-            </div>
-            <div className="tabungan-summary">
-              <div>
-                <p>Terkumpul</p>
-                <p>{formatRupiah(terkumpul)}</p>
-              </div>
-              <div>
-                <p>Kekurangan</p>
-                <p>{formatRupiah(kekurangan)}</p>
-              </div>
-            </div>
-            <div className="tabungan-history">
-              <p>30 Oktober 2024 - 12:00</p>
-              <p>Rabu, 30 Oktober 2024</p>
-              <p>+ {formatRupiah(100000)}</p>
             </div>
           </div>
         </section>
