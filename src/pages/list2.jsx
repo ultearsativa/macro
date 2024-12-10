@@ -20,7 +20,7 @@ function List2() {
           throw new Error("Token tidak tersedia. Harap login terlebih dahulu.");
         }
 
-        const response = await fetch(`http://localhost:5000/api/auth/bersama/${id}`, {
+        const response = await fetch(`http://localhost:5000/api/auth/bersama/history/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -68,8 +68,8 @@ function List2() {
   return (
     <>
       <header>
-        <link rel="stylesheet" href="assets/css/listT.css" />
-        <img src="assets/img/logo.png" alt="Logo" className="logo" />
+        <link rel="stylesheet" href="/assets/css/listT.css" />
+        <img src="/assets/img/logo.png" alt="Logo" className="logo" />
         <nav className="navigation">
           <Link to="/home">Home</Link>
           <Link to="/keuangan">Keuangan</Link>
@@ -85,7 +85,7 @@ function List2() {
           <div className="tabungan-detail">
             <div className="tabungan-image-section">
               <img
-                src={data.unggah_gambar || "assets/img/default.jpg"}
+                src={data.unggah_gambar || "/assets/img/default.jpg"}
                 alt={data.judul}
                 className="tabungan-image"
               />

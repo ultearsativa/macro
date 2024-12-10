@@ -349,7 +349,6 @@ export const getBersamaSavingDetails = async (req, res) => {
 };
 
 export const updateBersamaSaving = [
-  upload.single('unggah_gambar'),
   async (req, res) => {
     try {
       const token = req.headers.authorization?.split(" ")[1];
@@ -360,10 +359,133 @@ export const updateBersamaSaving = [
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const { id } = req.params; // Mendapatkan ID dari parameter URL
 
-      const { nominal_setor } = req.body; // Hanya nominal_setor yang dapat diubah
-      const { file } = req;
-      const unggahGambarPath = file ? file.path : null;
+      const { nominal_setor } = req.body; // Mendapatkan nominal_setor dari body
+      const file = req.file; // Mendapatkan file dari upload
 
+      console.log("Nominal setor:", nominal_setor); // Log untuk melihat nilai nominal_setor
+      console.log("File:", file); // Log untuk melihat file yang di-upload
+
+      // Validasi nominal_setor (pastikan berupa angka positif jika ada)
+      if (nominal_setor) {
+        const parsedNominalSetor = parseFloat(nominal_setor);
+        if (isNaN(parsedNominalSetor) || parsedNominalSetor <= 0) {
+          return res.status(400).json({ message: "Nominal setor harus berupa angka positif!" });
+        }
+      }
+
+      // Menyimpan gambar hanya jika ada
+      const unggahGambarPath = file ? file.filename : null;
+
+      // Timestamp untuk perubahan
+      const timestamp = new Date().toISOString();
+
+      // Membuat query untuk update, hanya mengupdate yang ada
+      let updateQuery = "UPDATE bersama SET ";
+      let params = [];
+
+      if (nominal_setor) {
+        updateQuery += "nominal_setor = ?, ";
+        params.push(parseFloat(nominal_setor)); // Menambahkan nominal_setor jika ada
+      }
+
+      if (file) {
+        updateQuery += "unggah_gambar = ?, ";
+        params.push(unggahGambarPath); // Menambahkan path gambar jika ada
+      }
+
+      // Menghapus koma terakhir dan menambahkan kondisi untuk ID
+      updateQuery = updateQuery.slice(0, -2); // Menghapus koma terakhir
+      updateQuery += " WHERE id_bersama = ? AND user_id = ?";
+      params.push(id, decoded.userId); // Menambahkan ID dan user_id untuk kondisi WHERE
+
+      console.log("Running update query with params:", params);
+
+      const result = await database.execute(updateQuery, params);
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Data tidak ditemukan atau Anda tidak memiliki akses!" });
+      }
+
+      console.log("Update result:", result); // Log hasil dari query update
+
+      return res.status(200).json({ message: "Riwayat setor berhasil diperbarui!" });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ message: "Terjadi kesalahan server." });
+    }
+  }
+];
+
+export const updateBersama = [
+  async (req, res) => {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        return res.status(401).json({ message: "Token tidak tersedia!" });
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const { id } = req.params; // Mendapatkan ID dari parameter URL
+
+      const { judul } = req.body; // Mendapatkan judul dari body
+      const file = req.file; // Mendapatkan file dari upload
+
+      console.log("Judul:", judul); // Log untuk melihat nilai judul
+      console.log("File:", file); // Log untuk melihat file yang di-upload
+
+      // Membuat query untuk update, hanya mengupdate kolom judul dan unggah_gambar
+      let updateQuery = "UPDATE bersama SET ";
+      let params = [];
+
+      // Cek jika judul ada dan tambahkan ke query
+      if (judul) {
+        updateQuery += "judul = ?, ";
+        params.push(judul); // Menambahkan judul jika ada
+      }
+
+      // Cek jika file ada dan tambahkan ke query
+      if (file) {
+        const unggahGambarPath = file.filename; // Menyimpan nama file jika ada
+        updateQuery += "unggah_gambar = ?, ";
+        params.push(unggahGambarPath); // Menambahkan path gambar jika ada
+      }
+
+      // Menghapus koma terakhir dan menambahkan kondisi untuk ID
+      updateQuery = updateQuery.slice(0, -2); // Menghapus koma terakhir
+      updateQuery += " WHERE id = ? AND user_id = ?";
+      params.push(id, decoded.userId); // Menambahkan ID dan user_id untuk kondisi WHERE
+
+      console.log("Running update query with params:", params);
+
+      const result = await database.execute(updateQuery, params);
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Data tidak ditemukan atau Anda tidak memiliki akses!" });
+      }
+
+      console.log("Update result:", result); // Log hasil dari query update
+
+      return res.status(200).json({ message: "Data berhasil diperbarui!" });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ message: "Terjadi kesalahan server." });
+    }
+  }
+];
+
+
+export const createRiwayat = [
+  async (req, res) => {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        return res.status(401).json({ message: "Token tidak tersedia!" });
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const { id_bersama, nominal_setor } = req.body; // Mendapatkan id_bersama dan nominal_setor dari body
+
+      console.log("ID Bersama:", id_bersama); // Log untuk melihat nilai id_bersama
       console.log("Nominal setor:", nominal_setor); // Log untuk melihat nilai nominal_setor
 
       // Validasi nominal_setor (pastikan berupa angka positif)
@@ -377,26 +499,24 @@ export const updateBersamaSaving = [
       }
 
       // Timestamp untuk perubahan
-      const timestamp = new Date().toISOString(); // Atau gunakan `NOW()` untuk database
+      const timestamp = new Date().toISOString();
 
-      // Query untuk menambahkan riwayat setor baru
+      // Membuat query untuk menambahkan riwayat setor baru
       const query = `
         INSERT INTO riwayat_setor (
           id_bersama, 
           nominal_setor, 
-          unggah_gambar,
           timestamp,
           user_id
         )
-        VALUES (?, ?, ?, ?, ?);
+        VALUES (?, ?, ?, ?);
       `;
 
-      console.log("Running query with params:", [id, parsedNominalSetor, unggahGambarPath, timestamp, decoded.userId]);
+      console.log("Running query with params:", [id_bersama, parsedNominalSetor, timestamp, decoded.userId]);
 
       const result = await database.execute(query, [
-        id, // id_bersama, dari parameter URL
+        id_bersama, // id_bersama, dari body
         parsedNominalSetor, 
-        unggahGambarPath, 
         timestamp, 
         decoded.userId
       ]);
@@ -410,6 +530,9 @@ export const updateBersamaSaving = [
     }
   }
 ];
+
+
+
 
 export const getHistoryBersama = async (req, res) => {
   try {
@@ -437,7 +560,7 @@ export const getHistoryBersama = async (req, res) => {
       b.nominal_setor, 
       b.unggah_gambar, 
       COALESCE(SUM(r.nominal_setor), 0) + b.nominal_setor AS currentAmount,
-      r.timestamp AS lastTransactionDate
+      MAX(r.timestamp) AS lastTransactionDate
     FROM 
       bersama b
     LEFT JOIN 
@@ -446,9 +569,7 @@ export const getHistoryBersama = async (req, res) => {
       b.user_id = ? AND b.id = ?
     GROUP BY 
       b.id, b.judul, b.target_tabungan, b.tanggal_awal_setor, b.tanggal_akhir_setor, 
-      b.frekuensi_setor, b.nominal_setor, b.unggah_gambar
-    ORDER BY 
-      r.timestamp DESC;  -- Mengurutkan berdasarkan transaksi terakhir
+      b.frekuensi_setor, b.nominal_setor, b.unggah_gambar;
     `;
 
     // Eksekusi query dengan user_id dari token dan id tabungan yang dipilih

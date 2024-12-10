@@ -10,7 +10,7 @@ const formatTanggal = (dateString) => {
   return `${day}/${month}/${year}`;
 };
 
-function Tabunganbersama() {
+function EditBersama() {
   const { id } = useParams(); // Ambil ID dari parameter URL
   const [tabungan, setTabungan] = useState(null); // Simpan data tabungan
   const [frequency, setFrequency] = useState("Mingguan");
@@ -77,9 +77,9 @@ function Tabunganbersama() {
   };
 
   const handleSave = async () => {
-    // Validasi input
-    if (!formData.nominal_setor || isNaN(formData.nominal_setor)) {
-      alert("Nominal Setor harus berupa angka!");
+    // Validasi input untuk judul
+    if (!formData.judul) {
+      alert("Judul tidak boleh kosong!");
       return;
     }
   
@@ -88,16 +88,20 @@ function Tabunganbersama() {
       const token = localStorage.getItem("token");
   
       const dataToSend = new FormData();
-      dataToSend.append("nominal_setor", formData.nominal_setor); // Kirim hanya nominal_setor
-      dataToSend.append("id_bersama", formData.id);
+      dataToSend.append("judul", formData.judul); // Kirim hanya judul
+  
+      // Jika ada file gambar yang diupload, kirim file tersebut
+      if (file) {
+        dataToSend.append("unggah_gambar", file); // Kirim file gambar
+      }
   
       try {
-        const response = await fetch(`http://localhost:5000/api/auth/riwayat`, {
-          method: "POST",
+        const response = await fetch(`http://localhost:5000/api/auth/bersama/${id}`, {
+          method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          body: dataToSend, 
+          body: dataToSend, // Kirim FormData yang berisi data judul dan gambar
         });
   
         if (!response.ok) {
@@ -111,7 +115,8 @@ function Tabunganbersama() {
         alert("Terjadi kesalahan saat menyimpan data.");
       }
     }
-  };
+  };  
+  
     
   const handleCancel = () => {
     const isCancelled = window.confirm("Apakah Anda yakin ingin membatalkan perubahan?");
@@ -239,4 +244,4 @@ function Tabunganbersama() {
   );
 }
 
-export default Tabunganbersama;
+export default EditBersama ;

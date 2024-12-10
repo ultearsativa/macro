@@ -15,6 +15,7 @@ import Profil from "./pages/profil";
 import Tabunganbersama from "./pages/tabunganbersama";
 import Tabunganpribadi from "./pages/tabunganpribadi";
 import Login from "./pages/login";
+import EditBersama from "./pages/editbersama";
 
 function App(root) {
   return (
@@ -29,12 +30,13 @@ function App(root) {
         <Route path="/isiartikel" element={<Isiartikel />} />
         <Route path="/keuangan" element={<Keuangan />} />
         <Route path="/list" element={<List />} />
-        <Route path="/list2" element={<List2 />} />
+        <Route path="/list2/:id" element={<List2 />} />
         <Route path="/listBersama" element={<ListBersama />} />
         <Route path="/listBersama2" element={<ListBersama2 />} />
         <Route path="/profil" element={<Profil />} />
         <Route path="/tabunganbersama/:id" element={<Tabunganbersama />} />
         <Route path="/tabunganpribadi" element={<Tabunganpribadi />} />
+        <Route path="/editbersama/:id" element={<EditBersama />} />
       </Routes>
     </Router>
   );
