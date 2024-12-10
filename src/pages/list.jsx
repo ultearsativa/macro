@@ -1,126 +1,116 @@
-import React, { Fragment } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 
-function List() { 
+function List() {
+  const { id } = useParams(); // Ambil ID dari parameter URL
+  const [data, setData] = useState(null); // State untuk data tabungan bersama
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+  useEffect(() => {
+    console.log("Fetching data for ID:", id); // Debugging ID
+
+    // Fungsi untuk fetch data tabungan bersama
+    const fetchData = async () => {
+      try {
+        // Ambil token dari localStorage
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("Token tidak tersedia. Harap login terlebih dahulu.");
+        }
+
+        const response = await fetch(`http://localhost:5000/api/auth/pribadi/history/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("API Result:", result); // Debugging log untuk memeriksa respons API
+
+        if (result && result.length > 0) {
+          setData(result[0]); // Ambil tabungan pertama
+        } else {
+          throw new Error("Data tidak ditemukan atau array kosong");
+        }
+
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error:", err); // Debugging log untuk menangani error
+        setError(err.message);
+        setIsLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchData();
+    }
+  }, [id]);
+
+  const formatRupiah = (angka) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(angka);
+  };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!data) return <p>Data tidak ditemukan.</p>;
+
   return (
-    <Fragment>
-      <>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Tabungan Pribadi</title>
-        <link rel="stylesheet" href="assets/css/list.css" />
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-        />
-        <header>
-          <img src="assets/img/logo.png" alt="Logo" className="logo" />
-          <nav className="navigation">
-                <Link to ="/home"><a href="home.html">
-                  Home
-                </a></Link>
-                <a
-                  href="#"
-                  className="navigation-link dropdown-toggle active"
-                  data-bs-toggle="dropdown"
-                >
-                  Tabungan
-                </a>
-                <div className="dropdown-menu fade-up m-0">
-                  <Link to ="/formbersama"><a href="formbersama.html" className="dropdown-item">
-                    Tabungan Bersama
-                  </a></Link>
-                  <Link to ="/formpribadi"><a href="formpribadi.html" className="dropdown-item">
-                    Tabungan Mandiri
-                  </a></Link>
-                </div>
-                  <Link to ="/keuangan"><a href="keuangan.html">Keuangan</a></Link>
-                  <Link to ="/artikel"><a href="Artikel.html">Artikel</a></Link>
-                  <Link to ="/profil"><a href="profil.html">
-                  <button className="profile">Profile</button>
-                  </a></Link>
-              </nav>
-        </header>
-        <main>
-    <section className="tabungan-container">
-      <h1>Tabungan Mandiri</h1>
-      <div className="tabungan-select">
-        <button>
-          <span>🗂️ Pilih Jenis Tabungan</span>
-          <span className="tabungan-jenis">Pribadi</span>
-        </button>
-      </div>
-      <div className="tabungan-card">
-        <div className="tabungan-item">
-        <div class="card">
-    <div class="card-header">
-      <i class="star-icon">★</i>
-      <span>Macbook</span>
-      <i class="edit-icon">✏️</i>
-    </div>
-    <img
-      src="assets/img/macbook.jpg"
-      alt="Holiday Beach"
-      class="card-image"
-    />
-  </div>
-          <div className="tabungan-info">
-            <div>
-              Target <span>Rp 30.000.000</span>
+    <>
+      <header>
+        <link rel="stylesheet" href="/assets/css/listT.css" />
+        <img src="/assets/img/logo.png" alt="Logo" className="logo" />
+        <nav className="navigation">
+          <Link to="/home">Home</Link>
+          <Link to="/keuangan">Keuangan</Link>
+        </nav>
+      </header>
+
+      <main>
+        <section className="detail-tabungan-container">
+          <div className="back-button" onClick={() => window.history.back()}>
+            ⬅️
+          </div>
+          <h1>{data.judul}</h1>
+          <div className="tabungan-detail">
+            <div className="tabungan-image-section">
+              <img
+                src={data.unggah_gambar || "/assets/img/default.jpg"}
+                alt={data.judul}
+                className="tabungan-image"
+              />
             </div>
-            <div>
-              Nominal Setor <span>Rp 200.000</span>
+            <div className="tabungan-info">
+              <h2>{formatRupiah(data.target_tabungan)}</h2>
+              <p>
+                {formatRupiah(data.nominal_setor)} {data.frekuensi_setor}
+              </p>
+              <p>Terkumpul: {formatRupiah(data.currentAmount)}</p>
             </div>
-            <div>
-              Tanggal Awal Setor <span>24/10/2024</span>
-            </div>
-            <div>
-              Tanggal Akhir Setor <span>24/12/2024</span>
-            </div>
-            <div>
-              Nominal Saat Ini <span>Rp 15.000.000</span>
+            <div className="tabungan-dates">
+              <div>
+                <p>Tanggal Dibuat</p>
+                <p>{new Date(data.tanggal_awal_setor).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <p>Estimasi Tanggal Ketercapaian</p>
+                <p>{new Date(data.tanggal_akhir_setor).toLocaleDateString()}</p>
+              </div>
             </div>
           </div>
-        </div>
-        </div>
-        <div className="tabungan-card">
-        <div className="tabungan-item">
-        <div class="card">
-    <div class="card-header">
-      <i class="star-icon">★</i>
-      <span>Skincare</span>
-      <i class="edit-icon">✏️</i>
-    </div>
-    <img
-      src="assets/img/skincare.jpeg"
-      alt="Holiday Beach"
-      class="card-image"
-    />
-  </div>
-          <div className="tabungan-info">
-            <div>
-              Target <span>Rp 1.000.000</span>
-            </div>
-            <div>
-              Nominal Setor <span>Rp 50.000</span>
-            </div>
-            <div>
-              Tanggal Awal Setor <span>25/12/2024</span>
-            </div>
-            <div>
-              Tanggal Akhir Setor <span>25/1/2024</span>
-            </div>
-            <div>
-              Nominal Saat Ini <span>Rp 300.000</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-      </>
-    </Fragment>
-    
+        </section>
+      </main>
+    </>
   );
 }
 

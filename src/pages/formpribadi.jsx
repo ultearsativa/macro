@@ -9,7 +9,6 @@ function formpribadi() {
     tanggal_awal_setor: "2024-10-24", // Nilai default
     tanggal_akhir_setor: "2024-10-24", // Nilai default
     nominal_setor: "", // Inisialisasi dengan string kosong
-    invite: "", // Inisialisasi dengan string kosong
     unggah_gambar: "Pilih File", // Nilai default
     frekuensi_setor: "Mingguan", // Nilai default
   });
@@ -49,6 +48,7 @@ function formpribadi() {
   // Handle submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Data form:", formData);
   
     // Validasi form
     const newErrors = {};
@@ -73,7 +73,7 @@ function formpribadi() {
         return;
       }
   
-      const response = await fetch("http://localhost:5000/api/auth/bersama", {
+      const response = await fetch("http://localhost:5000/api/auth/pribadi", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -130,7 +130,7 @@ function formpribadi() {
       <section>
         <div className="main-container">
           <div className="form-container">
-            <h2>Ayoo buat tabungan dengan teman atau keluargamu!</h2>
+            <h2>Ayoo buat tabunganmu!</h2>
             <form className="savings-form" onSubmit={handleSubmit}>
               <div className="form-row">
                 <div className="form-group">
@@ -215,19 +215,6 @@ function formpribadi() {
                 <button type="button" className="upload-btn" onClick={handleUpload}>
                   {formData.unggah_gambar}
                 </button>
-              </div>
-              <div className="form-group">
-                <label>Undang Teman</label>
-                <input
-                  type="text"
-                  name="invite"
-                  value={formData.invite}
-                  placeholder="Ketik username di sini yaa"
-                  onChange={handleInputChange}
-                  style={{
-                    border: errors.invite ? "2px solid red" : "",
-                  }}
-                />
               </div>
               <div className="form-actions">
                 <button

@@ -13,6 +13,12 @@ import {
   getHistoryBersama,
   createRiwayat,
   updateBersama, 
+  addPribadiSavings,
+  getPribadiSavings,
+  getPribadiSavingDetails,
+  updatePribadi,
+  createRiwayatPribadi,
+  getHistoryPribadi
 } from "../controllers/authController.mjs";
 import authenticate from "../middleware/authenticate.mjs"; // Middleware autentikasi
 import upload from "../middleware/multerConfig.mjs";
@@ -35,5 +41,12 @@ AuthRoutes.get("/bersama/:id", authenticate, getBersamaSavingDetails); // Mengam
 AuthRoutes.put("/bersama/:id", authenticate, upload.single('unggah_gambar'), updateBersama); // Memperbarui tabungan bersama
 AuthRoutes.get("/bersama/history/:id", authenticate, getHistoryBersama); // Rute terpisah untuk riwayat tabungan bersama
 AuthRoutes.post("/riwayat", authenticate,upload.none(), createRiwayat);
+
+AuthRoutes.post("/pribadi", authenticate, upload.single('unggah_gambar'), addPribadiSavings);
+AuthRoutes.get("/pribadi", authenticate, getPribadiSavings);
+AuthRoutes.get("/pribadi/:id", authenticate, getPribadiSavingDetails);
+AuthRoutes.put("/pribadi/:id", authenticate, upload.single('unggah_gambar'), updatePribadi);
+AuthRoutes.get("/pribadi/history/:id", authenticate, getHistoryPribadi);
+AuthRoutes.post("/riwayatpribadi", authenticate,upload.none(), createRiwayatPribadi);
 
 export default AuthRoutes;

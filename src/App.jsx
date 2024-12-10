@@ -10,12 +10,13 @@ import Keuangan from "./pages/keuangan";
 import List from "./pages/list";
 import List2 from "./pages/list2";
 import ListBersama from "./pages/listBersama";
-import ListBersama2 from "./pages/listBersama2";
+import Listmandiri from "./pages/listmandiri";
 import Profil from "./pages/profil";
 import Tabunganbersama from "./pages/tabunganbersama";
 import Tabunganpribadi from "./pages/tabunganpribadi";
 import Login from "./pages/login";
 import EditBersama from "./pages/editbersama";
+import EditPribadi from "./pages/editpribadi";
 
 function App(root) {
   return (
@@ -29,14 +30,15 @@ function App(root) {
         <Route path="/formpribadi" element={<Formpribadi />} />
         <Route path="/isiartikel" element={<Isiartikel />} />
         <Route path="/keuangan" element={<Keuangan />} />
-        <Route path="/list" element={<List />} />
+        <Route path="/list/:id" element={<List />} />
         <Route path="/list2/:id" element={<List2 />} />
         <Route path="/listBersama" element={<ListBersama />} />
-        <Route path="/listBersama2" element={<ListBersama2 />} />
+        <Route path="/listmandiri" element={<Listmandiri />} />
         <Route path="/profil" element={<Profil />} />
         <Route path="/tabunganbersama/:id" element={<Tabunganbersama />} />
-        <Route path="/tabunganpribadi" element={<Tabunganpribadi />} />
+        <Route path="/tabunganpribadi/:id" element={<Tabunganpribadi />} />
         <Route path="/editbersama/:id" element={<EditBersama />} />
+        <Route path="/editpribadi/:id" element={<EditPribadi />} />
       </Routes>
     </Router>
   );

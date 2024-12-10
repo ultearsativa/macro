@@ -587,3 +587,292 @@ export const getHistoryBersama = async (req, res) => {
     return res.status(500).json({ message: "Terjadi kesalahan server." });
   }
 };
+
+export const addPribadiSavings = [
+  upload.single('unggah_gambar'), // Middleware untuk upload gambar
+  async (req, res) => {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        return res.status(401).json({ message: "Token tidak tersedia!" });
+      }
+
+      console.log("Token diterima:", token);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      const {
+        judul,
+        target_tabungan,
+        tanggal_awal_setor,
+        tanggal_akhir_setor,
+        frekuensi_setor,
+        nominal_setor
+      } = req.body;
+
+      if (!judul || !target_tabungan || !tanggal_awal_setor || !tanggal_akhir_setor || !frekuensi_setor || !nominal_setor) {
+        return res.status(400).json({ message: "Semua data wajib diisi!" });
+      }
+
+      const { file } = req;
+      const unggahGambarPath = file ? file.path : null;
+
+      const query = `
+        INSERT INTO pribadi (judul, target_tabungan, tanggal_awal_setor, tanggal_akhir_setor, frekuensi_setor, nominal_setor, unggah_gambar, user_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+
+      await database.execute(query, [
+        judul,
+        target_tabungan,
+        tanggal_awal_setor,
+        tanggal_akhir_setor,
+        frekuensi_setor,
+        nominal_setor,
+        unggahGambarPath,
+        decoded.userId
+      ]);
+
+      return res.status(201).json({ message: "Tabungan bersama berhasil ditambahkan!" });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ message: "Terjadi kesalahan server." });
+    }
+  }
+];
+
+export const getPribadiSavings = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token tidak tersedia!" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Query untuk mendapatkan tabungan bersama dan jumlah nominal setor yang sudah dilakukan
+    const query = `
+    SELECT 
+      p.id, 
+      p.judul, 
+      p.target_tabungan, 
+      p.tanggal_awal_setor, 
+      p.tanggal_akhir_setor, 
+      p.frekuensi_setor, 
+      p.nominal_setor, 
+      p.unggah_gambar, 
+      COALESCE(SUM(s.nominal_setor), 0) + p.nominal_setor AS currentAmount
+    FROM 
+      pribadi p
+    LEFT JOIN 
+      setor_pribadi s ON p.id = s.id_pribadi AND p.user_id = s.user_id
+    WHERE 
+      p.user_id = ?
+    GROUP BY 
+      p.id, p.judul, p.target_tabungan, p.tanggal_awal_setor, p.tanggal_akhir_setor, 
+      p.frekuensi_setor, p.nominal_setor, p.unggah_gambar;
+        `;
+
+    const [rows] = await database.execute(query, [decoded.userId]);
+    console.log("Data tabungan mandiri:", rows);
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Terjadi kesalahan server." });
+  }
+};
+
+export const getPribadiSavingDetails = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token tidak tersedia!" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { id } = req.params; // Mendapatkan ID dari parameter URL
+
+    const query = `
+      SELECT id, judul, target_tabungan, tanggal_awal_setor, tanggal_akhir_setor, frekuensi_setor, nominal_setor, unggah_gambar
+      FROM pribadi
+      WHERE id = ? AND user_id = ?
+    `;
+    const [rows] = await database.execute(query, [id, decoded.userId]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Tabungan bersama tidak ditemukan!" });
+    }
+
+    return res.status(200).json(rows[0]);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Terjadi kesalahan server." });
+  }
+};
+
+export const updatePribadi = [
+  async (req, res) => {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        return res.status(401).json({ message: "Token tidak tersedia!" });
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const { id } = req.params; // Mendapatkan ID dari parameter URL
+
+      const { judul } = req.body; // Mendapatkan judul dari body
+      const file = req.file; // Mendapatkan file dari upload
+
+      console.log("Judul:", judul); // Log untuk melihat nilai judul
+      console.log("File:", file); // Log untuk melihat file yang di-upload
+
+      // Membuat query untuk update, hanya mengupdate kolom judul dan unggah_gambar
+      let updateQuery = "UPDATE pribadi SET ";
+      let params = [];
+
+      // Cek jika judul ada dan tambahkan ke query
+      if (judul) {
+        updateQuery += "judul = ?, ";
+        params.push(judul); // Menambahkan judul jika ada
+      }
+
+      // Cek jika file ada dan tambahkan ke query
+      if (file) {
+        const unggahGambarPath = file.filename; // Menyimpan nama file jika ada
+        updateQuery += "unggah_gambar = ?, ";
+        params.push(unggahGambarPath); // Menambahkan path gambar jika ada
+      }
+
+      // Menghapus koma terakhir dan menambahkan kondisi untuk ID
+      updateQuery = updateQuery.slice(0, -2); // Menghapus koma terakhir
+      updateQuery += " WHERE id = ? AND user_id = ?";
+      params.push(id, decoded.userId); // Menambahkan ID dan user_id untuk kondisi WHERE
+
+      console.log("Running update query with params:", params);
+
+      const result = await database.execute(updateQuery, params);
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Data tidak ditemukan atau Anda tidak memiliki akses!" });
+      }
+
+      console.log("Update result:", result); // Log hasil dari query update
+
+      return res.status(200).json({ message: "Data berhasil diperbarui!" });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ message: "Terjadi kesalahan server." });
+    }
+  }
+];
+
+export const createRiwayatPribadi = [
+  async (req, res) => {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        return res.status(401).json({ message: "Token tidak tersedia!" });
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const { id_pribadi, nominal_setor } = req.body; // Mendapatkan id_bersama dan nominal_setor dari body
+
+      console.log("ID Pribadi:", id_pribadi); // Log untuk melihat nilai id_bersama
+      console.log("Nominal setor:", nominal_setor); // Log untuk melihat nilai nominal_setor
+
+      // Validasi nominal_setor (pastikan berupa angka positif)
+      if (!nominal_setor) {
+        return res.status(400).json({ message: "Nominal setor wajib diisi!" });
+      }
+
+      const parsedNominalSetor = parseFloat(nominal_setor);
+      if (isNaN(parsedNominalSetor) || parsedNominalSetor <= 0) {
+        return res.status(400).json({ message: "Nominal setor harus berupa angka positif!" });
+      }
+
+      // Timestamp untuk perubahan
+      const timestamp = new Date().toISOString();
+
+      // Membuat query untuk menambahkan riwayat setor baru
+      const query = `
+        INSERT INTO setor_pribadi (
+          id_pribadi, 
+          nominal_setor, 
+          timestamp,
+          user_id
+        )
+        VALUES (?, ?, ?, ?);
+      `;
+
+      console.log("Running query with params:", [id_pribadi, parsedNominalSetor, timestamp, decoded.userId]);
+
+      const result = await database.execute(query, [
+        id_pribadi, // id_bersama, dari body
+        parsedNominalSetor, 
+        timestamp, 
+        decoded.userId
+      ]);
+
+      console.log("Insert result:", result); // Log hasil dari query insert
+
+      return res.status(200).json({ message: "Riwayat setor berhasil ditambahkan!" });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ message: "Terjadi kesalahan server." });
+    }
+  }
+];
+
+export const getHistoryPribadi = async (req, res) => {
+  try {
+    // Ambil token dari header Authorization
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Token tidak tersedia!" });
+    }
+
+    // Verifikasi token JWT
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Ambil id tabungan yang diminta dari URL parameter (misalnya req.params.id)
+    const tabunganId = req.params.id;
+
+    // Query untuk mendapatkan detail tabungan bersama, termasuk nominal setor
+    const query = `
+    SELECT 
+      p.id, 
+      p.judul, 
+      p.target_tabungan, 
+      p.tanggal_awal_setor, 
+      p.tanggal_akhir_setor, 
+      p.frekuensi_setor, 
+      p.nominal_setor, 
+      p.unggah_gambar, 
+      COALESCE(SUM(s.nominal_setor), 0) + p.nominal_setor AS currentAmount,
+      MAX(s.timestamp) AS lastTransactionDate
+    FROM 
+      pribadi p
+    LEFT JOIN 
+      setor_pribadi s ON p.id = s.id_pribadi AND p.user_id = s.user_id
+    WHERE 
+      p.user_id = ? AND p.id = ?
+    GROUP BY 
+      p.id, p.judul, p.target_tabungan, p.tanggal_awal_setor, p.tanggal_akhir_setor, 
+      p.frekuensi_setor, p.nominal_setor, p.unggah_gambar;
+    `;
+
+    // Eksekusi query dengan user_id dari token dan id tabungan yang dipilih
+    const [rows] = await database.execute(query, [decoded.userId, tabunganId]);
+
+    // Jika data tidak ditemukan
+    if (!rows.length) {
+      return res.status(404).json({ message: "Tidak ada data tabungan bersama untuk tabungan ini!" });
+    }
+
+    // Kirimkan data ke frontend
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Terjadi kesalahan server." });
+  }
+};

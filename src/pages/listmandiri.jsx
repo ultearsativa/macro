@@ -37,9 +37,9 @@ const formatTanggal = (dateString) => {
 };
 
 
-const ListBersama = () => {
+const Listmandiri = () => {
   const [tabunganList, setTabunganList] = useState([]);
-  const [jenisTabungan, setJenisTabungan] = useState("Bersama");
+  const [jenisTabungan, setJenisTabungan] = useState("Mandiri");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const ListBersama = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token"); // Token dari localStorage
-        const response = await fetch("http://localhost:5000/api/auth/bersama", {
+        const response = await fetch("http://localhost:5000/api/auth/pribadi", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -68,7 +68,7 @@ const ListBersama = () => {
   }, []);
 
   const handleSelectJenisTabungan = () => {
-    const types = ["Pribadi", "Holiday", "Birthday Party"];
+    const types = ["Bersama", "Holiday", "Birthday Party"];
     const currentIndex = types.indexOf(jenisTabungan);
     const nextIndex = (currentIndex + 1) % types.length;
     setJenisTabungan(types[nextIndex]);
@@ -83,11 +83,11 @@ const ListBersama = () => {
   };
 
   const handleDetail = (id) => {
-    navigate(`/editbersama/${id}`);
+    navigate(`/editpribadi/${id}`);
   }
 
   const handleEdit = (id) => {
-    navigate(`/tabunganbersama/${id}`); 
+    navigate(`/tabunganpribadi/${id}`); 
   };
 
   return (
@@ -136,7 +136,7 @@ const ListBersama = () => {
       </header>
       <main>
         <section className="tabungan-container">
-          <h1>Tabungan Bersama</h1>
+          <h1>Tabungan Mandiri</h1>
           <div className="tabungan-select">
             <button onClick={handleSelectJenisTabungan}>
               <span>🗂️ Pilih Jenis Tabungan</span>
@@ -168,4 +168,4 @@ const ListBersama = () => {
   );
 };
 
-export default ListBersama;
+export default Listmandiri;
